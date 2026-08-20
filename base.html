@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{% block title %}AppCheck - Is This App Genuine or Fake?{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: "#2563EB",
+          "primary-container": "#1D4ED8",
+          "on-primary": "#FFFFFF",
+          background: "#F8FAFC",
+          surface: "#FFFFFF",
+          "surface-alt": "#F1F5F9",
+          "on-surface": "#0F172A",
+          "on-surface-variant": "#475569",
+          outline: "#E2E8F0",
+          success: "#16A34A",
+          "success-bg": "#F0FDF4",
+          "success-border": "#BBF7D0",
+          warning: "#F59E0B",
+          "warning-bg": "#FFFBEB",
+          "warning-border": "#FDE68A",
+          danger: "#DC2626",
+          "danger-bg": "#FEF2F2",
+          "danger-border": "#FECACA",
+        },
+        fontFamily: {
+          heading: ["Manrope", "sans-serif"],
+          body: ["Inter", "sans-serif"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  h1, h2, h3, h4, .font-heading { font-family: 'Manrope', sans-serif; }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased">
+
+<header class="bg-surface shadow-sm sticky top-0 z-50 w-full">
+  <div class="flex justify-between items-center px-4 md:px-10 w-full max-w-6xl mx-auto h-16">
+    <a href="{% url 'appcheck:home' %}" class="font-heading text-xl font-bold text-primary flex items-center gap-2">
+      <span class="material-symbols-outlined fill-icon" aria-hidden="true">verified_user</span>
+      AppCheck
+    </a>
+    <nav class="hidden md:flex gap-6 h-full items-center">
+      <a class="h-full flex items-center text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'home' %}text-primary border-b-2 border-primary{% else %}text-on-surface-variant hover:text-primary{% endif %}" href="{% url 'appcheck:home' %}">Home</a>
+      <a class="h-full flex items-center text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'check_app' %}text-primary border-b-2 border-primary{% else %}text-on-surface-variant hover:text-primary{% endif %}" href="{% url 'appcheck:check_app' %}">Check an App</a>
+      <a class="h-full flex items-center text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'past_checks' %}text-primary border-b-2 border-primary{% else %}text-on-surface-variant hover:text-primary{% endif %}" href="{% url 'appcheck:past_checks' %}">Past Checks</a>
+    </nav>
+    <a href="{% url 'appcheck:check_app' %}" class="hidden md:flex bg-primary text-on-primary text-sm font-semibold px-6 py-3 rounded-lg hover:bg-primary-container transition-colors">
+      Get Started
+    </a>
+    <button class="md:hidden text-on-surface" onclick="document.getElementById('mobile-nav').classList.toggle('hidden')" aria-label="Toggle menu">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+  <div id="mobile-nav" class="hidden md:hidden border-t border-outline bg-surface px-4 py-3 flex flex-col gap-3">
+    <a class="text-sm font-medium text-on-surface-variant" href="{% url 'appcheck:home' %}">Home</a>
+    <a class="text-sm font-medium text-on-surface-variant" href="{% url 'appcheck:check_app' %}">Check an App</a>
+    <a class="text-sm font-medium text-on-surface-variant" href="{% url 'appcheck:past_checks' %}">Past Checks</a>
+  </div>
+</header>
+
+{% if messages %}
+<div class="w-full max-w-6xl mx-auto px-4 md:px-10 pt-4">
+  {% for message in messages %}
+  <div class="rounded-lg border px-4 py-3 text-sm mb-2 {% if message.tags == 'error' %}bg-danger-bg border-danger-border text-danger{% else %}bg-success-bg border-success-border text-success{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main class="flex-grow w-full max-w-6xl mx-auto px-4 md:px-10 py-8 flex flex-col items-center">
+{% block content %}{% endblock %}
+</main>
+
+<footer class="bg-surface-alt border-t border-outline w-full mt-auto">
+  <div class="w-full py-8 px-4 md:px-10 max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="font-heading font-bold text-on-surface flex items-center gap-2">
+      <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+      AppCheck
+    </div>
+    <p class="text-xs text-on-surface-variant text-center md:text-left">© 2026 AppCheck. All rights reserved.</p>
+    <nav class="flex flex-wrap justify-center gap-4">
+      <a class="text-xs text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">Terms of Service</a>
+      <a class="text-xs text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">Privacy Policy</a>
+      <a class="text-xs text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">Contact Support</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

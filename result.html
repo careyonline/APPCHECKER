@@ -1,0 +1,84 @@
+{% extends "appcheck/base.html" %}
+{% block title %}{{ record.app_name }} - Result - AppCheck{% endblock %}
+{% block content %}
+{% if record.prediction == "Genuine" %}
+  {% with accent="success" bg="success-bg" border="success-border" icon="check_circle" %}
+  <div class="text-center mb-8">
+    <h1 class="font-heading text-3xl md:text-4xl font-bold">Your Result</h1>
+  </div>
+  <div class="w-full max-w-3xl bg-surface rounded-xl shadow-sm border border-outline overflow-hidden relative mb-8">
+    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-success"></div>
+    <div class="p-8 md:p-12 flex flex-col items-center text-center gap-4 pl-8 md:pl-14">
+      <div class="w-20 h-20 rounded-full bg-success-bg flex items-center justify-center text-success mb-1">
+        <span class="material-symbols-outlined fill-icon text-5xl">check_circle</span>
+      </div>
+      <h2 class="font-heading text-2xl md:text-3xl font-bold text-success">Genuine</h2>
+      <p class="text-lg text-on-surface-variant max-w-lg mx-auto">
+        <strong>{{ record.app_name }}</strong> looks safe based on the information provided.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 mt-2 w-full">
+        <div class="bg-success-bg border border-success-border px-6 py-4 rounded-xl flex flex-col items-center min-w-[140px]">
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Confidence</span>
+          <span class="font-heading text-2xl font-semibold text-success">{{ record.confidence }}%</span>
+        </div>
+        <div class="bg-success-bg border border-success-border px-6 py-4 rounded-xl flex flex-col items-center min-w-[140px]">
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Risk</span>
+          <span class="font-heading text-2xl font-semibold text-success">{{ record.risk_level }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endwith %}
+{% else %}
+  <div class="text-center mb-8">
+    <h1 class="font-heading text-3xl md:text-4xl font-bold">Your Result</h1>
+  </div>
+  <div class="w-full max-w-3xl bg-surface rounded-xl shadow-sm border border-outline overflow-hidden relative mb-8">
+    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-danger"></div>
+    <div class="p-8 md:p-12 flex flex-col items-center text-center gap-4 pl-8 md:pl-14">
+      <div class="w-20 h-20 rounded-full bg-danger-bg flex items-center justify-center text-danger mb-1">
+        <span class="material-symbols-outlined fill-icon text-5xl">warning</span>
+      </div>
+      <h2 class="font-heading text-2xl md:text-3xl font-bold text-danger">Suspicious</h2>
+      <p class="text-lg text-on-surface-variant max-w-lg mx-auto">
+        <strong>{{ record.app_name }}</strong> shows signs of risk based on the information provided.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 mt-2 w-full">
+        <div class="bg-danger-bg border border-danger-border px-6 py-4 rounded-xl flex flex-col items-center min-w-[140px]">
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Confidence</span>
+          <span class="font-heading text-2xl font-semibold text-danger">{{ record.confidence }}%</span>
+        </div>
+        <div class="bg-danger-bg border border-danger-border px-6 py-4 rounded-xl flex flex-col items-center min-w-[140px]">
+          <span class="text-xs text-on-surface-variant uppercase tracking-wider mb-1">Risk</span>
+          <span class="font-heading text-2xl font-semibold text-danger">{{ record.risk_level }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<div class="w-full max-w-3xl flex flex-col gap-4 mb-8">
+  <h3 class="font-heading text-xl font-semibold mb-1 text-center md:text-left">Why did we get this result?</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for reason in record.reasons %}
+    <div class="bg-surface rounded-lg p-4 shadow-sm border border-outline flex items-start gap-3">
+      <span class="material-symbols-outlined mt-0.5 {% if record.prediction == 'Genuine' %}text-success{% else %}text-danger{% endif %}">
+        {% if record.prediction == 'Genuine' %}task_alt{% else %}error{% endif %}
+      </span>
+      <p class="text-sm">{{ reason }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="w-full max-w-3xl flex flex-col sm:flex-row justify-center gap-4">
+  <a href="{% url 'appcheck:check_app' %}" class="bg-primary text-on-primary font-semibold px-6 py-3 rounded-lg shadow-sm hover:bg-primary-container transition-colors w-full sm:w-auto flex justify-center items-center gap-2">
+    <span class="material-symbols-outlined text-lg">search</span>
+    Check Another App
+  </a>
+  <a href="{% url 'appcheck:past_checks' %}" class="bg-white border border-outline font-semibold px-6 py-3 rounded-lg hover:bg-surface-alt transition-colors w-full sm:w-auto flex justify-center items-center gap-2 shadow-sm">
+    <span class="material-symbols-outlined text-lg">history</span>
+    View Past Checks
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "appcheck/base.html" %}
+{% block content %}
+<div class="w-full max-w-3xl text-center mb-12 mt-6">
+  <h1 class="font-heading text-3xl md:text-5xl font-extrabold text-on-surface mb-4 leading-tight">
+    Is That App <span class="text-primary">Genuine</span> or <span class="text-danger">Fake?</span>
+  </h1>
+  <p class="text-lg text-on-surface-variant mb-8">
+    AppCheck analyzes permissions, developer trust signals, and review patterns to flag risky
+    or deceptive mobile apps before you install them.
+  </p>
+  <a href="{% url 'appcheck:check_app' %}" class="inline-flex items-center gap-2 bg-primary text-on-primary font-semibold px-8 py-4 rounded-lg shadow-sm hover:bg-primary-container transition-colors">
+    <span class="material-symbols-outlined">analytics</span>
+    Check an App Now
+  </a>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl mb-12">
+  <div class="bg-surface rounded-xl border border-outline p-6 text-center shadow-sm">
+    <p class="text-3xl font-heading font-bold text-primary">{{ total_checks }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Apps Checked</p>
+  </div>
+  <div class="bg-surface rounded-xl border border-outline p-6 text-center shadow-sm">
+    <p class="text-3xl font-heading font-bold text-success">{{ genuine_count }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Genuine</p>
+  </div>
+  <div class="bg-surface rounded-xl border border-outline p-6 text-center shadow-sm">
+    <p class="text-3xl font-heading font-bold text-danger">{{ suspicious_count }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Suspicious</p>
+  </div>
+</div>
+
+<div class="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+  <div class="bg-surface rounded-xl border border-outline p-6 shadow-sm">
+    <span class="material-symbols-outlined text-primary text-3xl mb-3 block">security</span>
+    <h3 class="font-heading font-semibold text-lg mb-2">Permission Analysis</h3>
+    <p class="text-sm text-on-surface-variant">Flags apps that request excessive or unusually sensitive permissions.</p>
+  </div>
+  <div class="bg-surface rounded-xl border border-outline p-6 shadow-sm">
+    <span class="material-symbols-outlined text-primary text-3xl mb-3 block">reviews</span>
+    <h3 class="font-heading font-semibold text-lg mb-2">Review Intelligence</h3>
+    <p class="text-sm text-on-surface-variant">Scans review text and ratings for signs of scams or fake engagement.</p>
+  </div>
+  <div class="bg-surface rounded-xl border border-outline p-6 shadow-sm">
+    <span class="material-symbols-outlined text-primary text-3xl mb-3 block">verified</span>
+    <h3 class="font-heading font-semibold text-lg mb-2">Developer Trust</h3>
+    <p class="text-sm text-on-surface-variant">Checks developer verification status and privacy policy availability.</p>
+  </div>
+</div>
+
+{% if recent_checks %}
+<div class="w-full max-w-3xl">
+  <h2 class="font-heading text-xl font-semibold mb-4 text-center md:text-left">Recently Checked</h2>
+  <div class="flex flex-col gap-3">
+    {% for r in recent_checks %}
+    <a href="{% url 'appcheck:result' r.pk %}" class="bg-surface rounded-lg border border-outline p-4 flex justify-between items-center shadow-sm hover:bg-surface-alt transition-colors">
+      <span class="font-medium">{{ r.app_name }}</span>
+      <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold
+        {% if r.prediction == 'Genuine' %}bg-success-bg text-success{% else %}bg-danger-bg text-danger{% endif %}">
+        {{ r.prediction }}
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
